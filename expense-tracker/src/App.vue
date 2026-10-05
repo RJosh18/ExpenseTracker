@@ -29,9 +29,15 @@ const total = computed(() => calculateTotal(visibleExpenses.value));
 <template>
   <main class="container">
     <h1>Expense Tracker</h1>
-    <ExpenseForm @add="addExpense" />
-    <FilterBar v-model:category="categoryFilter" v-model:month="monthFilter" />
-    <SummaryCard :total="total" :expenses="expenses" />
-    <ExpenseList :expenses="visibleExpenses" @delete="removeExpense" />
+    <div class="layout">
+      <div class="col-left">
+        <ExpenseForm @add="addExpense" />
+        <SummaryCard :total="total" :expenses="expenses" />
+      </div>
+      <div class="col-right">
+        <FilterBar v-model:category="categoryFilter" v-model:month="monthFilter" />
+        <ExpenseList :expenses="visibleExpenses" @delete="removeExpense" />
+      </div>
+    </div>
   </main>
 </template>
