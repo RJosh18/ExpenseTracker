@@ -1,5 +1,9 @@
 export function calculateTotal(expenses) {
-  return expenses.reduce((sum, e) => sum + e.amount, 0);
+  const totalCents = expenses.reduce(
+    (sum, expense) => sum + Math.round(expense.amount * 100),
+    0,
+  );
+  return totalCents / 100;
 }
 
 export function getCategoryTotals(expenses) {

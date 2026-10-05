@@ -3,7 +3,7 @@ defineProps({
   expenses: { type: Array, required: true },
 });
 
-const emit = defineEmits(['delete']);
+const emit = defineEmits(["delete"]);
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const emit = defineEmits(['delete']);
     <ul class="expense-list">
       <li v-for="e in expenses" :key="e.id">
         <div>
-          <div v-html="e.description"></div>
+          <div>{{ e.description }}</div>
           <div class="meta">{{ e.category }} · {{ e.date }}</div>
         </div>
         <div>

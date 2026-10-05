@@ -6,5 +6,12 @@ export function saveExpenses(expenses) {
 
 export function loadExpenses() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  return raw === null ? [] : JSON.parse(raw);
+  if (raw === null) return [];
+
+  try {
+    const expenses = JSON.parse(raw);
+    return Array.isArray(expenses) ? expenses : [];
+  } catch {
+    return [];
+  }
 }

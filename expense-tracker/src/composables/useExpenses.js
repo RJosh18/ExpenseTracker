@@ -1,5 +1,5 @@
-import { ref } from 'vue';
-import { loadExpenses, saveExpenses } from '../services/storage.js';
+import { ref } from "vue";
+import { loadExpenses, saveExpenses } from "../services/storage.js";
 
 function createExpenseId() {
   return (

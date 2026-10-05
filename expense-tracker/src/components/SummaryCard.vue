@@ -35,7 +35,7 @@ const topExpenses = computed(() =>
   <section class="card">
     <h2>Summary</h2>
     <p>
-      Total: <strong>${{ total }}</strong>
+      Total: <strong>${{ total.toFixed(2) }}</strong>
     </p>
     <p>
       Converted:
@@ -46,7 +46,7 @@ const topExpenses = computed(() =>
     </p>
     <h3>Largest expenses</h3>
     <ul class="breakdown">
-      <li v-for="e in topExpenses" :key="e.description">
+      <li v-for="e in topExpenses" :key="e.id">
         {{ e.description }}: ${{ e.amount.toFixed(2) }}
       </li>
     </ul>

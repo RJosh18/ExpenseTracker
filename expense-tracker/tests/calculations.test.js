@@ -1,44 +1,60 @@
-export function calculateTotal(expenses) {
-  const totalCents = expenses.reduce(
-    (sum, expense) => sum + Math.round(expense.amount * 100),
-    0,
-  );
-  return totalCents / 100;
-}
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  calculateTotal,
+  filterByMonth,
+  getCategoryTotals,
+  todayString,
+} from "../src/utils/calculations.js";
 
-export function getCategoryTotals(expenses) {
-  const totalsInCents = new Map();
-
-  for (const expense of expenses) {
-    const cents =
-      (totalsInCents.get(expense.category) ?? 0) +
-      Math.round(expense.amount * 100);
-    totalsInCents.set(expense.category, cents);
-  }
-
-  return Object.fromEntries(
-    [...totalsInCents].map(([category, cents]) => [category, cents / 100]),
-  );
-}
-
-export function filterByMonth(expenses, year, month) {
-  return expenses.filter((expense) => {
-    const [expenseYear, expenseMonth] = expense.date.split("-").map(Number);
-    return expenseYear === year && expenseMonth === month;
+describe("calculations", () => {
+  it("sums expense amounts", () => {
+    expect(calculateTotal([{ amount: 12.5 }, { amount: 7.5 }])).toBe(20);
+    expect(calculateTotal([])).toBe(0);
   });
-}
 
-export function todayString() {
-  const parts = new Intl.DateTimeFormat("en-AU", {
-    timeZone: "Australia/Melbourne",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(new Date());
+  it("groups amounts by category", () => {
+    expect(
+      getCategoryTotals([
+        { category: "Food", amount: 12 },
+        { category: "Transport", amount: 8 },
+        { category: "Food", amount: 3 },
+      ]),
+    ).toEqual({ Food: 15, Transport: 8 });
+  });
 
-  const dateParts = Object.fromEntries(
-    parts.map(({ type, value }) => [type, value]),
-  );
+  it("treats the input month as 1-based", () => {
+    const expenses = [
+      { date: "2025-01-15", amount: 10 },
+      { date: "2025-02-15", amount: 20 },
+      { date: "2025-12-15", amount: 30 },
+    ];
 
-  return `${dateParts.year}-${dateParts.month}-${dateParts.day}`;
-}
+    expect(filterByMonth(expenses, 2025, 1)).toEqual([expenses[0]]);
+    expect(filterByMonth(expenses, 2025, 12)).toEqual([expenses[2]]);
+  });
+
+  describe("in the Melbourne timezone", () => {
+    let originalTimezone;
+
+    beforeAll(() => {
+      originalTimezone = process.env.TZ;
+      process.env.TZ = "Australia/Melbourne";
+    });
+
+    afterAll(() => {
+      if (originalTimezone === undefined) {
+        delete process.env.TZ;
+      } else {
+        process.env.TZ = originalTimezone;
+      }
+      vi.useRealTimers();
+    });
+
+    it("returns the current Melbourne calendar date", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2025-01-01T13:30:00.000Z"));
+
+      expect(todayString()).toBe("2025-01-02");
+    });
+  });
+});
