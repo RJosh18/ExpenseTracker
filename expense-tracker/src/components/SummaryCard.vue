@@ -27,7 +27,7 @@ watch(
 );
 
 const topExpenses = computed(() =>
-  props.expenses.sort((a, b) => b.amount - a.amount).slice(0, 3),
+  [...props.expenses].sort((a, b) => b.amount - a.amount).slice(0, 3),
 );
 </script>
 
